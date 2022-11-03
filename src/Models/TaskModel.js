@@ -8,9 +8,9 @@ const Tasks = sequelize.define(
   {
     taskName: TEXT,
     priority: STRING,
-    deadlineDate: DATEONLY,
-    starts: TIME,
-    ends: TIME,
+    // deadlineDate: DATEONLY,
+    // starts: TIME,
+    // ends: TIME,
     is_deleted: BOOLEAN,
   },
   {
