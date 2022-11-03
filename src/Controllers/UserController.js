@@ -1,3 +1,4 @@
+import Users from "../Models/UsersModel";
 export const registerUser = async (req, res) => {
   try {
     res.status(201).json("User Register");
