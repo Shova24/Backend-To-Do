@@ -10,10 +10,18 @@ const Users = sequelize.define(
     username: {
       type: STRING,
       allowNull: true,
+      unique: {
+        args: true,
+        msg: "Username already in use!",
+      },
     },
     email: {
       type: STRING,
       allowNull: true,
+      unique: {
+        args: true,
+        msg: "Email address already in use!",
+      },
     },
     password: {
       type: STRING,
