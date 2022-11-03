@@ -1,5 +1,6 @@
 import Users from "../Models/UsersModel";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 export const registerUser = async (req, res) => {
   try {
     const { username, email, password } = req.body;
@@ -13,25 +14,39 @@ export const registerUser = async (req, res) => {
     res.status(201).json({ message: "User Registered" });
   } catch (error) {
     res.status(404).json({ message: error.message });
-
-    // const error = new Error("Registration Failed");
   }
 };
 
 export const loginUser = async (req, res) => {
   try {
-    res.status(200).json("User Logged In");
-  } catch (err) {
-    const error = new Error("Login Failled");
-    res.status(404).json(error.message);
+    const user = await Users.findOne({
+      where: { email: req.body.email },
+      raw: true,
+    });
+    if (!user) {
+      const err = new Error("User not found");
+      res.status(200).json(err.message);
+      return;
+    }
+    const password_matched = await bcrypt.compare(req.body.password, user.password);
+    if (!password_matched) {
+      const err = new Error("Password not matched!!!");
+      res.status(200).json(err.message);
+      return;
+    }
+    const accessToken = jwt.sign(user, "jwt-secret", { expiresIn: "10s" });
+
+    res.status(200).json(accessToken);
+  } catch (error) {
+    res.status(404).json({ message: error.message });
   }
 };
+
 export const getUser = async (req, res) => {
   try {
     const users = await Users.findAll({ raw: true });
     res.status(200).json(users);
-  } catch (err) {
-    const error = new Error("Get User  Failed");
-    res.status(404).json(error.message);
+  } catch (error) {
+    res.status(404).json({ message: error.message });
   }
 };
