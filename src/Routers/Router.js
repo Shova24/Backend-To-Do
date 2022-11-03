@@ -5,3 +5,5 @@ const router = Router();
 
 router.use("/users", UserRouter);
 router.use("/task", TaskRouter);
+
+export default router;
