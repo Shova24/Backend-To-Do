@@ -1,9 +1,8 @@
 import Task from "../Models/TaskModel";
 import jwt from "jsonwebtoken";
 import Tasks from "../Models/TaskModel";
+
 export const createTask = async (req, res) => {
-  // let decodeToken = jwt.verify(token, "jwt-secret");
-  // console.log(decodeToken);
   try {
     const authHeader = req.get("Authorization");
     if (!authHeader) {
@@ -24,46 +23,66 @@ export const createTask = async (req, res) => {
       return next(error.message);
     }
 
-    const { taskName, priority, is_deleted } = req.body;
-    const newTask = { taskName, priority, is_deleted, ToDoUserId: decodeToken.id };
+    const { taskName, priority } = req.body;
+    const newTask = { taskName, priority, is_deleted: false, ToDoUserId: decodeToken.id };
     console.log("====================================");
-    console.log("newTask: ", newTask);
+    console.log(newTask);
     console.log("====================================");
+
     await Tasks.create(newTask);
     const task = await Tasks.findAll({ raw: true });
     res.status(201).json(task);
   } catch (error) {
-    const err = new Error("Task not created");
-    res.status(404).json(err.message);
+    res.status(404).json("Task Created Failed : " + error.message);
   }
 };
+
 export const getTasks = async (req, res) => {
   try {
-    res.status(201).json("Tasklist get");
+    const tasks = await Tasks.findAll({ raw: true });
+    res.status(201).json({ message: tasks });
   } catch (error) {
-    const err = new Error("Get Task Not executed");
-    res.status(404).json(err.message);
+    res.status(404).json({ message: "Get Task Failed : " + error.message });
   }
 };
 export const updateTask = async (req, res) => {
   try {
-    res.status(200).json("Update Task");
+    const taskId = req.params.id;
+    const { taskName, priority } = req.body;
+    await Tasks.update({ taskName, priority }, { where: { id: taskId } });
+    const task = await Tasks.findOne({ where: { id: taskId }, raw: true });
+
+    console.log("====================================");
+    console.log("Task Id : ", taskId);
+    console.log("New Task : ", task);
+    console.log("====================================");
+    const tasks = await Tasks.findAll({ where: { is_deleted: false }, raw: true });
+
+    res.status(200).json({ message: task });
   } catch (error) {
-    const err = new Error("Task not updated");
     res.status(404).json(err.message);
   }
 };
-export const updateInTrash = async (req, res) => {
+export const deleteToTrash = async (req, res) => {
   try {
-    res.status(200).json("Delete Task");
+    const taskId = req.params.id;
+    await Tasks.update({ is_deleted: "True" }, { where: { id: taskId } });
+    res.status(200).json({ message: "Task Deleted" });
   } catch (error) {
     const err = new Error("Task not Deleted");
-    res.status(404).json(err.message);
+    res.status(404).json(error.message);
   }
 };
 export const redoTask = async (req, res) => {
   try {
-    res.status(200).json("Redo Task");
+    const taskId = req.params.id;
+    const task = await Tasks.findOne({ where: { id: taskId } });
+    if (task) {
+      await Tasks.update({ is_deleted: "FALSE" }, { where: { id: taskId } });
+      res.status(200).json({ message: "Task Restored!" });
+    } else {
+      res.status(200).json({ message: "Task not found." });
+    }
   } catch (error) {
     const err = new Error("redoTask failed");
     res.status(404).json(err.message);
@@ -71,9 +90,12 @@ export const redoTask = async (req, res) => {
 };
 export const deleteTask = async (req, res) => {
   try {
-    res.status(200).json("Delete Task Permanently");
+    await Tasks.destroy({
+      where: { id: req.params.id },
+    });
+    res.status(200).json({ message: "Delete Task Permanently" });
   } catch (error) {
     const err = new Error("Task not Deleted Permanently");
-    res.status(404).json(err.message);
+    res.status(404).json(error.message);
   }
 };
