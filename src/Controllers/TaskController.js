@@ -1,4 +1,3 @@
-import Task from "../Models/TaskModel";
 import jwt from "jsonwebtoken";
 import Tasks from "../Models/TaskModel";
 
@@ -23,11 +22,11 @@ export const createTask = async (req, res) => {
       return next(error.message);
     }
 
-    const { taskName, priority } = req.body;
-    const newTask = { taskName, priority, is_deleted: false, ToDoUserId: decodeToken.id };
-    console.log("====================================");
-    console.log(newTask);
-    console.log("====================================");
+    const { taskName, priority, deadlineTime, deadlineDate } = req.body;
+    const newTask = { taskName, priority, deadlineDate, deadlineTime, is_deleted: false, ToDoUserId: decodeToken.id };
+    // console.log("====================================");
+    // console.log(newTask);
+    // console.log("====================================");
 
     await Tasks.create(newTask);
     const task = await Tasks.findAll({ raw: true });
@@ -51,11 +50,6 @@ export const updateTask = async (req, res) => {
     const { taskName, priority } = req.body;
     await Tasks.update({ taskName, priority }, { where: { id: taskId } });
     const task = await Tasks.findOne({ where: { id: taskId }, raw: true });
-
-    console.log("====================================");
-    console.log("Task Id : ", taskId);
-    console.log("New Task : ", task);
-    console.log("====================================");
     const tasks = await Tasks.findAll({ where: { is_deleted: false }, raw: true });
 
     res.status(200).json({ message: task });

@@ -13,7 +13,16 @@ export const registerUser = async (req, res) => {
     await Users.create(user);
     res.status(201).json({ message: "User Registered" });
   } catch (error) {
+    if (error.message === "Username already in use!") {
+      res.status(200).json({ message: error.message });
+      return;
+    }
+    if (error.message === "Email address already in use!") {
+      res.status(200).json({ message: error.message });
+      return;
+    }
     res.status(404).json({ message: error.message });
+    return;
   }
 };
 
@@ -25,18 +34,18 @@ export const loginUser = async (req, res) => {
     });
     if (!user) {
       const err = new Error("User not found");
-      res.status(200).json(err.message);
+      res.status(200).json({ message: err.message });
       return;
     }
     const password_matched = await bcrypt.compare(req.body.password, user.password);
     if (!password_matched) {
       const err = new Error("Password not matched!!!");
-      res.status(200).json(err.message);
+      res.status(200).json({ message: err.message });
       return;
     }
     const accessToken = jwt.sign(user, "jwt-secret", { expiresIn: "50m" });
 
-    res.status(200).json(accessToken);
+    res.status(200).json({ token: accessToken });
   } catch (error) {
     res.status(404).json({ message: error.message });
   }
