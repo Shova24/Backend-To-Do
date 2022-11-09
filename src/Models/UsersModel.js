@@ -1,6 +1,7 @@
 import { DataTypes } from "sequelize";
 import Tasks from "./TaskModel";
 import sequelize from "../config/Database";
+import Roles from "./Roles";
 
 const { STRING } = DataTypes;
 
@@ -35,5 +36,4 @@ const Users = sequelize.define(
 );
 
 Users.hasMany(Tasks);
-
 export default Users;
