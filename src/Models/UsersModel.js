@@ -3,10 +3,10 @@ import Tasks from "./TaskModel";
 import sequelize from "../config/Database";
 import Roles from "./Roles";
 
-const { STRING } = DataTypes;
+const { STRING, INTEGER } = DataTypes;
 
 const Users = sequelize.define(
-  "ToDo_Users",
+  "to_do_users",
   {
     username: {
       type: STRING,
@@ -15,6 +15,9 @@ const Users = sequelize.define(
         args: true,
         msg: "Username already in use!",
       },
+    },
+    role_id: {
+      type: INTEGER,
     },
     email: {
       type: STRING,
@@ -36,4 +39,8 @@ const Users = sequelize.define(
 );
 
 Users.hasMany(Tasks);
+Tasks.belongsTo(Users, { foreignKey: "id" });
+
+Roles.hasMany(Users, { foreignKey: "role_id" });
+
 export default Users;

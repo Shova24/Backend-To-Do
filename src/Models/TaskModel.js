@@ -1,10 +1,11 @@
 import { DataTypes } from "sequelize";
 import sequelize from "../config/Database";
+import Users from "./UsersModel";
 
 const { TEXT, STRING, DATEONLY, TIME, BOOLEAN } = DataTypes;
 
 const Tasks = sequelize.define(
-  "ToDo_Tasks",
+  "to_do_tasks",
   {
     taskName: TEXT,
     priority: STRING,
@@ -17,4 +18,5 @@ const Tasks = sequelize.define(
     schema: "ecrm_learning",
   }
 );
+
 export default Tasks;

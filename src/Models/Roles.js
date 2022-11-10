@@ -1,11 +1,12 @@
 import { DataTypes } from "sequelize";
 import sequelize from "../config/Database";
+import Role_Children from "./Role_Children";
 import Users from "./UsersModel";
 
 const { STRING } = DataTypes;
 
 const Roles = sequelize.define(
-  "ToDo_Roles",
+  "to_do_roles",
   {
     role: {
       type: STRING,
@@ -21,5 +22,7 @@ const Roles = sequelize.define(
     schema: "ecrm_learning",
   }
 );
+// Roles.hasMany(Users);
+// Users.belongsTo(Roles, { as: "role_id" });
 
 export default Roles;
