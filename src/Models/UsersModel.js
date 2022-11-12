@@ -41,6 +41,6 @@ const Users = sequelize.define(
 Users.hasMany(Tasks);
 Tasks.belongsTo(Users, { foreignKey: "id" });
 
-Roles.hasMany(Users, { foreignKey: "role_id" });
+// Roles.hasMany(Users, { foreignKey: "role_id" });
 
 export default Users;

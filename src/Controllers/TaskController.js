@@ -25,8 +25,8 @@ export const createTask = async (req, res) => {
     const { taskName, priority, deadlineTime, deadlineDate } = req.body;
     const newTask = { taskName, priority, deadlineDate, deadlineTime, is_deleted: false, ToDoUserId: decodeToken.id };
     // console.log("====================================");
-    // console.log(newTask);
-    // console.log("====================================");
+    console.log(newTask);
+    console.log("====================================");
 
     await Tasks.create(newTask);
     const task = await Tasks.findAll({ raw: true });
@@ -47,14 +47,15 @@ export const getTasks = async (req, res) => {
 export const updateTask = async (req, res) => {
   try {
     const taskId = req.params.id;
-    const { taskName, priority } = req.body;
-    await Tasks.update({ taskName, priority }, { where: { id: taskId } });
+    console.log(req.body);
+    const { taskName, priority,deadlineDate,deadlineTime } = req.body;
+    await Tasks.update({ taskName, priority,deadlineDate,deadlineTime }, { where: { id: taskId } });
     const task = await Tasks.findOne({ where: { id: taskId }, raw: true });
     const tasks = await Tasks.findAll({ where: { is_deleted: false }, raw: true });
 
     res.status(200).json({ message: task });
   } catch (error) {
-    res.status(404).json(err.message);
+    res.status(404).json(error.message);
   }
 };
 export const deleteToTrash = async (req, res) => {
@@ -78,8 +79,8 @@ export const redoTask = async (req, res) => {
       res.status(200).json({ message: "Task not found." });
     }
   } catch (error) {
-    const err = new Error("redoTask failed");
-    res.status(404).json(err.message);
+    // const err = new Error("redoTask failed");
+    res.status(404).json(error.message);
   }
 };
 export const deleteTask = async (req, res) => {
