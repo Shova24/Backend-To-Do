@@ -1,7 +1,6 @@
 import { DataTypes } from "sequelize";
 import Tasks from "./TaskModel";
 import sequelize from "../config/Database";
-import Roles from "./Roles";
 
 const { STRING, INTEGER } = DataTypes;
 
@@ -16,9 +15,7 @@ const Users = sequelize.define(
         msg: "Username already in use!",
       },
     },
-    role_id: {
-      type: INTEGER,
-    },
+
     email: {
       type: STRING,
       allowNull: true,
@@ -38,9 +35,7 @@ const Users = sequelize.define(
   }
 );
 
-Users.hasMany(Tasks);
-Tasks.belongsTo(Users, { foreignKey: "id" });
-
-// Roles.hasMany(Users, { foreignKey: "role_id" });
+Users.hasMany(Tasks, { foreignKey: "user_id" });
+// Tasks.belongsTo(Users, { foreignKey: "id" });
 
 export default Users;

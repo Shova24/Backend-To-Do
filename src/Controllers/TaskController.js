@@ -22,8 +22,8 @@ export const createTask = async (req, res) => {
       return next(error.message);
     }
 
-    const { taskName, priority, deadlineTime, deadlineDate } = req.body;
-    const newTask = { taskName, priority, deadlineDate, deadlineTime, is_deleted: false, ToDoUserId: decodeToken.id };
+    const { task_name, priority, deadline_time, deadline_date } = req.body;
+    const newTask = { task_name, priority, deadline_date, deadline_time, is_deleted: false, user_id: decodeToken.id };
     // console.log("====================================");
     console.log(newTask);
     console.log("====================================");
@@ -48,8 +48,8 @@ export const updateTask = async (req, res) => {
   try {
     const taskId = req.params.id;
     console.log(req.body);
-    const { taskName, priority,deadlineDate,deadlineTime } = req.body;
-    await Tasks.update({ taskName, priority,deadlineDate,deadlineTime }, { where: { id: taskId } });
+    const { task_name, priority, deadline_date, deadline_time } = req.body;
+    await Tasks.update({ task_name, priority, deadline_date, deadline_time }, { where: { id: taskId } });
     const task = await Tasks.findOne({ where: { id: taskId }, raw: true });
     const tasks = await Tasks.findAll({ where: { is_deleted: false }, raw: true });
 
